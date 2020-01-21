@@ -1,14 +1,16 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
+from mpl_toolkits.mplot3d import Axes3D
 import csv
 
 style.use('fivethirtyeight')
 
 fig = plt.figure()
-ax1 = fig.add_subplot(1, 1, 1)
+#ax2d = fig.add_subplot(111)
+ax3d = fig.add_subplot(111, projection='3d')
 
-def animate(i):
+def load_data():
     data_dict = {}
     with open('data.csv', 'r', newline='') as f:
         reader = csv.DictReader(f)
@@ -20,11 +22,28 @@ def animate(i):
                     data_dict[field].append(float(row[field]))
                 except ValueError:
                     pass
-    
-    xs = data_dict['MISSION TIME']
-    ys = data_dict['ALTITUDE']
-    ax1.clear()
-    ax1.plot(xs, ys)
+    return data_dict
 
-ani = animation.FuncAnimation(fig, animate, interval=1000)
-plt.show()
+
+def animate(i, xfield, yfield):
+    ax2d = plt.figure().add_subplot(111)
+    data_dict = load_data()
+    xs = data_dict[xfield]
+    ys = data_dict[yfield]
+    #xs = data_dict['MISSION TIME']
+    #ys = data_dict['ALTITUDE']
+    ax2d.clear()
+    ax2d.plot(xs, ys)
+
+def animate3d(i, xfield, yfield, zfield):
+    data_dict = load_data()
+    xs = data_dict[xfield]
+    ys = data_dict[yfield]
+    zs = data_dict[zfield]
+    ax3d.clear()
+    ax3d.plot(xs, ys, zs)
+
+if __name__ == '__main__':
+    #ani = animation.FuncAnimation(fig, animate, interval=1000, fargs=('MISSION TIME', 'ALTITUDE'))
+    ani2 = animation.FuncAnimation(fig, animate3d, interval=1000, fargs=('GPS LATITUDE', 'GPS LONGITUDE', 'GPS ALTITUDE'))
+    plt.show()
