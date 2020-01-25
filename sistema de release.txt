@@ -1,0 +1,103 @@
+//para la medicion de altitud se puede utilizar el
+//sensor bmp180
+
+//librerias necesarias para el sensor
+#include <SFE_BMP180.h>
+#include <Wire.h>
+
+//variable asociada a la libreria del sensor
+SFE_BMP180 bmp180;
+
+//librerias para el servo
+#include <Servo.h>
+
+//variable asociada al servo
+Servo release;
+
+//variable punto flotante de la presion a nivel del mar en mbar
+double P0
+char status;
+double T,P,H;
+
+void setup()
+{
+  Serial.begin(9600);
+  release.attach(); // aca poner el pin en el que se pone el servo
+
+
+  if (bmp180.begin())
+    Serial.println("BMP180 iniciado correctamenten"); //no es necesario esta linea, se puede añadir una led verde
+    status = bmp180.startTemperature();//Inicio de lectura de temperatura
+    if (status != 0)
+    {   
+      delay(status); //Pausa para que finalice la lectura
+      status = bmp180.getTemperature(T);//Obtener la temperatura
+      if (status != 0)
+      {
+        status = bmp180.startPressure(3);//Inicio lectura de presió
+        if (status != 0)
+        {        
+          delay(status);//Pausa para que finalice la lectura        
+          status = bmp180.getPressure(P,T);//Obtenemos la presión
+          if (status != 0)
+          {                  
+            P0=P; //Asignamos el valor de presión como punto de referencia
+	  }
+        }
+      }
+    }
+  }
+
+//si el sensor falla que lo indique
+  else
+  {
+//esta linea no es necesaria, se puede usar una led roja para idicar que no funciona el setup
+    Serial.println("Error al iniciar el BMP180"); 
+
+    while(1); // bucle infinito
+  }
+}
+
+double Hant = 0;
+
+void loop()
+{
+  status = bmp180.startTemperature();//Inicio de lectura de temperatura
+  if (status != 0);
+  {   
+    delay(status); //Pausa para que finalice la lectura
+    status = bmp180.getTemperature(T);//Obtener la temperatura
+    if (status != 0);
+    {
+      status = bmp180.startPressure(3);//Inicio lectura de presión
+      if (status != 0);
+      {        
+        delay(status);//Pausa para que finalice la lectura        
+        status = bmp180.getPressure(P,T);//Obtenemos la presión
+        if (status != 0);
+        {
+	  H=bmp180.altitud(P,P0); //aca termina la lectura de altitud
+          
+
+	  //si la altura medida es mayor a 100 metros, menor a la altura anterior y menor a 450 metros 
+	  //significa que esta bajando despues de subir 100 metros y
+	  if (H>100 && H>Hant && H<450);
+	  {
+	    //ahora debe activar el servo de release del cansat a los 450 metros
+	    
+	    relese.write(90) //90 grados de giro del servo, investigar cual es la mejor opcion para el radio de giro
+	  }
+	  
+	  //si la altura actual es menor a 10 metros activar el audio beacon
+	  if (H<10);
+	  {
+	    tone(,,); // pin,frecuencia,tiempo de reproduccion, linea para activar el parlante
+	  }
+	  Hant=H //cambiar la altura actual a ser la altura anterior
+	  
+        }
+      }
+    }
+  } 
+  delay(1000); //mediciones de altura cada segundo
+}
