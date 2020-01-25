@@ -106,7 +106,7 @@ def init():
 	
 	mainloop = True
 
-	while not mainloop:
+	while mainloop:
 	
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
