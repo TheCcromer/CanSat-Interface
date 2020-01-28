@@ -1,6 +1,9 @@
 import csv
 import numpy as np
 import time
+from utils import get_filepath
+
+PATH=f'{get_filepath()}/data.csv'
 
 if __name__ == '__main__':
     fieldnames = [
@@ -20,7 +23,7 @@ if __name__ == '__main__':
                 'SOFTWARE STATE',
                 'PARTICLE COUNT'
                 ]
-    with open('data.csv', mode='w', newline='') as f:
+    with open(PATH, mode='w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
     
@@ -47,7 +50,7 @@ if __name__ == '__main__':
                 'SOFTWARE STATE': software_state,
                 'PARTICLE COUNT': np.random.randint(100)
                 }
-        with open('data.csv', mode='a', newline='') as f:
+        with open(PATH, mode='a', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writerow(data)
             time.sleep(1)
