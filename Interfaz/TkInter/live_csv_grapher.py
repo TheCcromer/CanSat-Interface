@@ -30,8 +30,6 @@ def animate(i, xfield, yfield):
     data_dict = load_data()
     xs = data_dict[xfield]
     ys = data_dict[yfield]
-    #xs = data_dict['MISSION TIME']
-    #ys = data_dict['ALTITUDE']
     ax2d.clear()
     ax2d.plot(xs, ys)
 

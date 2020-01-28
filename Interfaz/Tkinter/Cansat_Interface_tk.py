@@ -31,7 +31,7 @@ def load_data():
                         value = row[field]
                     data_dict[field].append(value)
     except IOError as err:
-        #print(err)
+        print(err)
         data_dict = None
     return data_dict
 
@@ -86,28 +86,36 @@ class Application(tk.Frame):
         self.master.destroy()
     
     def _graph_temp(self):
-        self.graph.make_appear(self, 'MISSION TIME', 'TEMP')
+        self._graph2d('MISSION TIME', 'TEMP')
     
     def _graph_pres(self):
-        self.graph.make_appear(self, 'MISSION TIME', 'PRESSURE')
+        self._graph2d('MISSION TIME', 'PRESSURE')
 
     def _graph_volt(self):
-        self.graph.make_appear(self, 'MISSION TIME', 'VOLTAGE')    
+        self._graph2d('MISSION TIME', 'VOLTAGE')
 
     def _graph_airsp(self):
-        self.graph.make_appear(self, 'MISSION TIME', 'AIR SPEED')
+        self._graph2d('MISSION TIME', 'AIR SPEED')
 
     def _graph_alt(self):
-        self.graph.make_appear(self, 'MISSION TIME', 'ALTITUDE')
+        self._graph2d('MISSION TIME', 'ALTITUDE')
 
     def _graph_traj(self):
-        print('3D')
+        self._graph3d('GPS LATITUDE', 'GPS LONGITUDE', 'GPS ALTITUDE')
+
+    def _graph3d(self, xarg, yarg, zarg):
+        self.graph.set_projection('3d')
+        self.graph.make_appear(self, xarg, yarg, zarg)
+
+    def _graph2d(self, xarg, yarg):
+        self.graph.set_projection('rectilinear')
+        self.graph.make_appear(self, xarg, yarg)
+
 
     def _load_data(self):
         while not self.exit_flag:
             with self.data_lock:
                 self.data_dict = load_data()
-                #print('loaded')
             time.sleep(1.0)
 
 
