@@ -1,18 +1,22 @@
 /* Alvaro Bermudez
  * Projecto Cansat 2020 - 
- * Sistema de release utilizando el altimetro del sensor bmp280
+ * Sistema de fases utilizando el altimetro del sensor bmp280
  * 
- * Resumen del codigo
+ * Resumen del codigos
+ * El codigo se divide en 3 fases: despegue y descenso, toma de datos y aterrizaje
+ 
+ * Cuando el codigo inicia esta en fase 0, despegue y descenso
  * El codigo lee altura cada segundo y determina si esta en un rango de altura y si esta bajando 
- * Cuando las 3 condiciones se cumplen da una señal HIGH a un pin que esta conectado al cable de nicromio durante 5 segundos
+ * Cuando las 3 condiciones significa que el payload se ha liberado y cambia de fase
  * 
+ 
+ * La fase 1 es toma de datos en la que usa los sensores, envia los datos a la GCS y guarda datos en la eemprom
+ * Cuando el minuto de vuelo pase cambiad de fase y deja de usar los sensores
+ 
+ * La ultima fase de aterrizaje nada mas mide la altura y cuando sea menonr a 10m activa el audio beacon
+ 
  * Se necesita añadir el codigo para que se active el audiobeacon/buzzer
  * Para hacer las pruebas modificar los rangos de altura para determinar si el codigo funciona como se desea
- * 
- * 
- * SISTEMA AÑADIDO PARA EL PAYLOAD
- El payload puede realizar el mismo codigo modificando las codiciones para que libere el paracaidas despues de realizar un minuto
- aqui añadir guardar la altitud y el tiempo de vuelo en la memoria eeprom en caso de reseteo
  
  */
 /*Librerias y setups necesarios*/
@@ -51,18 +55,35 @@ void setup() {
 float H_anterior = 0;
 float H_actual = 0;
 
+int fase = 0;
+
 void loop() {
+  /* fase despegue y descenso*/
+  if (fase == 0);
+  {
     Serial.print(bmp.readTemperature());                          /*no necesita leer temperatura y presion pero por si acaso*/
     Serial.print(bmp.readPressure());
-
     H_actual = bmp.readAltitude(1013.25);
-
     if (H_actual>100 && H_actual>H_anterior && H_actual<450);     /*necesita 3 condiciones para dar la señal HIGH*/
     {                                                             /*que este entre el rango de 100 a 450 metros y bajando*/
-      digitalWrite(2,HIGH);
-      delay(5000);
+      fase = fase + 1                                             /*cambio de fase*/
     }
     H_anterior = H_actual;                                        /*despues de que compara alturas reescribe la altura actual como la anterior para el siguiente ciclo*/
     Serial.println();
     delay(1000);                                                  /*delay 1 Hz*/
+  }
+  /*fase de toma de datos. Aca se puede añadir los sensores, el envio de datos al XBEE y almacenamiento en eeprom
+  */
+  if (fase == 1);  
+  {
+      
+  }
+  /*fase de toma de aterrizaje, añadir solamente la activacion del audiobeacon*/
+  if (fase == 2);
+  {
+   H_actual = bmp.readAltitude(1013.25);
+   if (H_actual<10);{
+   
+   }
+  }
 }
