@@ -10,6 +10,10 @@
  * Para hacer las pruebas modificar los rangos de altura para determinar si el codigo funciona como se desea
  * 
  * 
+ * SISTEMA AÑADIDO PARA EL PAYLOAD
+ El payload puede realizar el mismo codigo modificando las codiciones para que libere el paracaidas despues de realizar un minuto
+ aqui añadir guardar la altitud y el tiempo de vuelo en la memoria eeprom en caso de reseteo
+ 
  */
 /*Librerias y setups necesarios*/
 
