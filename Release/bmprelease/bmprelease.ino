@@ -1,4 +1,16 @@
-
+/* Alvaro Bermudez
+ * Projecto Cansat 2020 - Sistema de release utilizando el altimetro del sensor bmp280
+ * 
+ * Resumen del codigo
+ * El codigo lee altura cada segundo y determina si esta en un rango de altura y si esta bajando 
+ * Cuando las 3 condiciones se cumplen da una señal HIGH a un pin que esta conectado al cable de nicromio durante 5 segundos
+ * 
+ * Se necesita añadir el codigo para que se active el audiobeacon/buzzer
+ * Para hacer las pruebas modificar los rangos de altura para determinar si el codigo funciona como se desea
+ * 
+ * 
+ */
+/*Librerias y setups necesarios*/
 
 #include <Wire.h>
 #include <SPI.h>
@@ -31,23 +43,21 @@ void setup() {
                   Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
 }
 
-H_anterior = 0;
-H_actual = 0
+float H_anterior = 0;
+float H_actual = 0;
 
 void loop() {
-    
-    Serial.print(bmp.readTemperature());
-
+    Serial.print(bmp.readTemperature());                          /*no necesita leer temperatura y presion pero por si acaso*/
     Serial.print(bmp.readPressure());
 
+    H_actual = bmp.readAltitude(1013.25);
 
-    H_actual = bmp.readAltitude(1013.25)
-
-    if (H_actual>100 && H_actual>H_anterior && H_actual<450);
-    {
+    if (H_actual>100 && H_actual>H_anterior && H_actual<450);     /*necesita 3 condiciones para dar la señal HIGH*/
+    {                                                             /*que este entre el rango de 100 a 450 metros y bajando*/
       digitalWrite(2,HIGH);
+      delay(5000);
     }
-    H_anterior = H_actual
+    H_anterior = H_actual;                                        /*despues de que compara alturas reescribe la altura actual como la anterior para el siguiente ciclo*/
     Serial.println();
-    delay(2000);
+    delay(1000);                                                  /*delay 1 Hz*/
 }
