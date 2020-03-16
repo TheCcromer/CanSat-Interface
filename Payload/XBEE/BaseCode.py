@@ -8,7 +8,7 @@ ser = serial.Serial(PORT, BAUD_RATE)
 
 while True:
  try:
-  response = xbee.wait_read_frame() //recibe los paquetes enviados por el XBEE
+  response = xbee.wait_read_frame() ##recibe los paquetes enviados por el XBEE
   print response
 except KeyboardInterrupt:
   break
